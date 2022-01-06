@@ -5,7 +5,7 @@ import time
 import numpy as np
 import datetime
 
-st.write("Casi Covid")
+st.write("Casi Covid") #markdown
 link = "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv"
 
 
