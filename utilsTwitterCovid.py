@@ -77,7 +77,7 @@ def plotCovidFigure(nuovi_decessi_average, nuovi_positivi_average, nuovi_TI_aver
     plt.legend(loc="best", bbox_to_anchor=(0.0, 0., 0.5, 0.5), framealpha=0.95)
     plt.tight_layout()
     filename = "ospedalizzati3.png"
-    plt.savefig(filename)
+    #plt.savefig(filename)
     mesiItaliani = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno",
                     "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"]
     todayDate = datetime.date.today()
