@@ -1,13 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import csv
-import pandas as pd
 import datetime
 import matplotlib.dates as mdates
 
-
-
-def plotCovidFigure(dataCovid,
+def plotCovidFigure(nuovi_decessi_average, nuovi_positivi_average, nuovi_TI_average, TI, ospedalizzati,
+                    dateValues,
                     let=0.02,
                     ospDeaths=0.013,
                     ICUDeaths=0.115,
@@ -17,23 +14,6 @@ def plotCovidFigure(dataCovid,
                     newICUshift=5,
                     newICUDeaths=1.7):
     print("I'm plotting")
-    ospedalizzati = dataCovid['totale_ospedalizzati'].to_numpy()
-    nuovi_positivi = dataCovid['nuovi_positivi'].to_numpy()
-    maxLen = len(nuovi_positivi)
-
-    decessiTotali = dataCovid['deceduti'].to_numpy()
-    nuovi_decessi = np.zeros(maxLen)
-    nuovi_decessi[1:] = decessiTotali[1:] - decessiTotali[:-1]
-    nuovi_TI = dataCovid['ingressi_terapia_intensiva'].to_numpy()
-    TI = dataCovid['terapia_intensiva'].to_numpy()
-    nuovi_decessi_average = np.zeros(maxLen)
-    nuovi_decessi_average[6:] = np.convolve(nuovi_decessi, 1 / 7 * np.ones(7), 'valid')
-    nuovi_positivi_average = np.zeros(maxLen)
-    nuovi_positivi_average[6:] = np.convolve(nuovi_positivi, 1 / 7 * np.ones(7), 'valid')
-    nuovi_TI_average = np.zeros(maxLen)
-    nuovi_TI_average[6:] = np.convolve(nuovi_TI, 1 / 7 * np.ones(7), 'valid')
-    dates = dataCovid['data'].to_numpy()
-    dateValues = [datetime.datetime.strptime(dates[d][:10], "%Y-%m-%d").date() for d in range(maxLen)]
 
     fig, ax1 = plt.subplots(figsize=(12, 6), dpi=600)
     minMax = 1000
