@@ -5,46 +5,84 @@ import matplotlib.dates as mdates
 
 def plotCovidFigure(nuovi_decessi_average, nuovi_positivi_average, nuovi_TI_average, TI, ospedalizzati,
                     dateValues,
+                    endDate,
+                    startDate=datetime.date(2020,8,15),
                     let=0.02,
-                    ospDeaths=0.013,
-                    ICUDeaths=0.115,
+                    ospCases=0.013/0.02,
+                    ICUCases=0.115/0.02,
+                    newICUCases=1.7/0.02,
                     deathsShift=13,
                     hospShift=10,
                     ICUShift=12,
                     newICUshift=5,
-                    newICUDeaths=1.7):
+                    logScale=True):
     print("I'm plotting")
 
-    fig, ax1 = plt.subplots(figsize=(12, 6), dpi=600)
-    minMax = 1000
-    plt.semilogy([d - datetime.timedelta(days=hospShift) for d in dateValues],
-                 ospedalizzati * ospDeaths, "-.", linewidth=2,
-                 label=f'Ospedalizzati per %1.3f %d gg dopo' % (ospDeaths, hospShift))
-    minMax = max(minMax, np.max(ospedalizzati * ospDeaths) * 1.5)
-    plt.semilogy([d - datetime.timedelta(days=ICUShift) for d in dateValues],
-                 TI * ICUDeaths, ":", linewidth=2,
-                 label=f'Terapia Intensiva per %1.3f %d gg dopo' % (ICUDeaths, ICUShift))
-    minMax = max(minMax, np.max(TI * ICUDeaths) * 1.5)
-    plt.semilogy([d - datetime.timedelta(days=newICUshift) for d in dateValues],
-                 nuovi_TI_average * newICUDeaths, "--", linewidth=2,
-                 label=f'Nuovi ingressi in TI per %1.3f %d gg dopo' % (newICUDeaths, newICUshift))
-    minMax = max(minMax, np.max(nuovi_TI_average * newICUDeaths) * 1.5)
-    plt.semilogy(dateValues,
-                 nuovi_positivi_average * let, "-", linewidth=2,
-                 label=f'Nuovi casi per %1.3f' % (let))
-    minMax = max(minMax, np.max(nuovi_positivi_average * let) * 1.5)
-    plt.semilogy([d - datetime.timedelta(days=deathsShift) for d in dateValues],
-                 nuovi_decessi_average, linewidth=2,
-                 label=f"Nuovi Decessi %d gg dopo" % (deathsShift))
-    minMax = max(minMax, np.max(nuovi_decessi_average) * 1.5)
+    fig, ax1 = plt.subplots(figsize=(10, 6), dpi=600)
+    
+    xticksMy = []    
+    for j in range(2020, 2024):
+        for k in range(1, 13):
+            xticksMy.append(datetime.date(j, k, 1))
+
+    formatter = mdates.DateFormatter("%m/%y")
+    ax1.xaxis.set_major_formatter(formatter)
+    ax1.set_xticks(xticksMy)
+    plt.xlim([startDate, endDate])
+
+    minMax = 50000
+    if logScale:
+        plt.semilogy([d - datetime.timedelta(days=hospShift) for d in dateValues],
+                     ospedalizzati / ospCases, "-.", linewidth=2,
+                     label=f'Ospedalizzati diviso %1.3f %d gg dopo' % (ospCases, hospShift))
+        minMax = max(minMax, np.max(ospedalizzati / ospCases) * 1.5)
+        plt.semilogy([d - datetime.timedelta(days=ICUShift) for d in dateValues],
+                     TI / ICUCases, ":", linewidth=2,
+                     label=f'Terapia Intensiva diviso %1.3f %d gg dopo' % (ICUCases, ICUShift))
+        minMax = max(minMax, np.max(TI / ICUCases) * 1.5)
+        plt.semilogy([d - datetime.timedelta(days=newICUshift) for d in dateValues],
+                     nuovi_TI_average / newICUCases, "--", linewidth=2,
+                     label=f'Nuovi ingressi in TI diviso %1.3f %d gg dopo' % (newICUCases, newICUshift))
+        minMax = max(minMax, np.max(nuovi_TI_average / newICUCases) * 1.5)
+        plt.semilogy(dateValues,
+                     nuovi_positivi_average, "-", linewidth=2,
+                     label=f'Nuovi casi')
+        minMax = max(minMax, np.max(nuovi_positivi_average) * 1.5)
+        plt.semilogy([d - datetime.timedelta(days=deathsShift) for d in dateValues],
+                     nuovi_decessi_average/let, linewidth=2,
+                     label=f"Nuovi Decessi diviso %1.3f %d gg dopo" % (let,deathsShift))
+        minMax = max(minMax, np.max(nuovi_decessi_average/let) * 1.5)
+        plt.legend(loc="best", bbox_to_anchor=(0.0, 0., 0.5, 0.5), framealpha=0.95)
+    else:
+        plt.plot([d - datetime.timedelta(days=hospShift) for d in dateValues],
+                     ospedalizzati / ospCases, "-.", linewidth=2,
+                     label=f'Ospedalizzati diviso %1.3f %d gg dopo' % (ospCases, hospShift))
+        minMax = max(minMax, np.max(ospedalizzati / ospCases) * 1.5)
+        plt.plot([d - datetime.timedelta(days=ICUShift) for d in dateValues],
+                     TI / ICUCases, ":", linewidth=2,
+                     label=f'Terapia Intensiva diviso %1.3f %d gg dopo' % (ICUCases, ICUShift))
+        minMax = max(minMax, np.max(TI / ICUCases) * 1.5)
+        plt.plot([d - datetime.timedelta(days=newICUshift) for d in dateValues],
+                     nuovi_TI_average / newICUCases, "--", linewidth=2,
+                     label=f'Nuovi ingressi in TI diviso %1.3f %d gg dopo' % (newICUCases, newICUshift))
+        minMax = max(minMax, np.max(nuovi_TI_average / newICUCases) * 1.5)
+        plt.plot(dateValues,
+                     nuovi_positivi_average, "-", linewidth=2,
+                     label=f'Nuovi casi')
+        minMax = max(minMax, np.max(nuovi_positivi_average) * 1.5)
+        plt.plot([d - datetime.timedelta(days=deathsShift) for d in dateValues],
+                     nuovi_decessi_average/let, linewidth=2,
+                     label=f"Nuovi Decessi diviso %1.3f %d gg dopo" % (let,deathsShift))
+        minMax = max(minMax, np.max(nuovi_decessi_average/let) * 1.5)
+        plt.legend(loc="best", framealpha=0.95)
 
     props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
-    plt.text(dateValues[-1] - datetime.timedelta(days=5), nuovi_positivi_average[-1] * let,
-             f"Nuovi casi {int(nuovi_positivi_average[-1]):,}", ha='right', bbox=props)
-    plt.text(dateValues[-1] - datetime.timedelta(days=newICUshift + 10), nuovi_TI_average[-1] * newICUDeaths * 1.1,
-             f"Nuove TI {int(nuovi_TI_average[-1]):,}", ha='right', bbox=props)
-    plt.text(dateValues[-1] - datetime.timedelta(days=deathsShift + 10), nuovi_decessi_average[-1] * 0.9,
-             f"Nuovi decessi {int(nuovi_decessi_average[-1]):,}", ha='right', bbox=props)
+    #plt.text(dateValues[-1] - datetime.timedelta(days=5), nuovi_positivi_average[-1],
+    #         f"Nuovi casi {int(nuovi_positivi_average[-1]):,}", ha='right', bbox=props)
+    # plt.text(dateValues[-1] - datetime.timedelta(days=newICUshift + 10), nuovi_TI_average[-1] / newICUCases * 1.1,
+    #          f"Nuove TI {int(nuovi_TI_average[-1]):,}", ha='right', bbox=props)
+    # plt.text(dateValues[-1] - datetime.timedelta(days=deathsShift + 10), nuovi_decessi_average[-1] /let * 0.9,
+    #          f"Nuovi decessi {int(nuovi_decessi_average[-1]):,}", ha='right', bbox=props)
 
     plt.axvline(datetime.date(2020, 12, 27), linewidth=1, color="k", linestyle="--", label="Inizio Vaccinazioni")
     # plt.axvline(datetime.date(2021,4,18),linewidth=1,color="k",linestyle="-.",label="Vaccinati l'80% di over80 con 1+ dose")
@@ -53,36 +91,51 @@ def plotCovidFigure(nuovi_decessi_average, nuovi_positivi_average, nuovi_TI_aver
     plt.axvline(datetime.date(2021, 6, 19), linewidth=1, color="k", linestyle="-.",
                 label="Vaccinati l'80% di over50 con 1+ dose")
 
-    xticksMy = []
-    for j in range(2020, 2024):
-        for k in range(1, 13):
-            xticksMy.append(datetime.date(j, k, 1))
 
-    formatter = mdates.DateFormatter("%m/%y")
-    ax1.xaxis.set_major_formatter(formatter)
-    ax1.set_xticks(xticksMy)
-    yticksMy = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000,
-                5000]
+
+    yticksMy = []
+    for k in [100, 1000, 10000, 100000]:
+        for j in range(1,10):
+            yticksMy.append(k*j)
+
     ax1.set_yticks(yticksMy)
     ax1.set_yticklabels([str(dig) for dig in yticksMy])
 
-    plt.xlim([datetime.date(2020, 8, 15), dateValues[-1] + datetime.timedelta(days=10)])
-    plt.ylim([5, minMax])
+    plt.ylim([100, minMax])
     plt.grid(True)
     plt.title("Covid-19 Italia (scala logaritmica)")
-    plt.text(datetime.date(2020, 10, 1), 3.3, "Grafico di Davide Torlo - Fonte dati: Protezione Civile",
-             horizontalalignment='left', verticalalignment='center',
-             color=[0.3, 0.3, 0.3])
+    #plt.text(datetime.date(2020, 10, 1), 3.3, "Grafico di Davide Torlo - Fonte dati: Protezione Civile",
+    #         horizontalalignment='left', verticalalignment='center',
+    #         color=[0.3, 0.3, 0.3])
 
-    plt.legend(loc="best", bbox_to_anchor=(0.0, 0., 0.5, 0.5), framealpha=0.95)
-    plt.tight_layout()
-    filename = "ospedalizzati3.png"
+
+    #plt.tight_layout()
+    #filename = "ospedalizzati3.png"
     #plt.savefig(filename)
     mesiItaliani = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno",
                     "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"]
     todayDate = datetime.date.today()
     caption = f"Aggiornamento %d %s: dati in media mobile 7gg." % (todayDate.day, mesiItaliani[todayDate.month - 1])
-    return caption, filename, plt
+
+    fig2, ax2 = plt.subplots(figsize=(10,6), dpi=600)
+    plt.plot(dateValues[deathsShift+6:],
+                     np.convolve(nuovi_decessi_average[deathsShift:]/nuovi_positivi_average[:-deathsShift], 1 / 7 * np.ones(7), 'valid'), linewidth=2,
+                     label="Letalità apparente")
+    plt.plot(dateValues[deathsShift+6:],
+                     np.convolve(nuovi_TI_average[deathsShift:]/nuovi_positivi_average[:-deathsShift], 1 / 7 * np.ones(7), 'valid'), linewidth=2,
+                     label="TI/casi apparente")
+    plt.plot(dateValues[deathsShift+6:],let*np.ones(len(dateValues[deathsShift+6:])),":")
+    plt.plot(dateValues[deathsShift+6:],newICUCases*np.ones(len(dateValues[deathsShift+6:])),":")
+    plt.ylim([0,0.03])
+    plt.legend(loc="best")
+    ax2.xaxis.set_major_formatter(formatter)
+    ax2.set_xticks(xticksMy)
+    plt.xlim([startDate, endDate])
+    plt.grid(True)
+    plt.title("Frazioni")
+    
+
+    return caption, fig, fig2
 
 
 def writePost(dataCovid):
