@@ -138,77 +138,105 @@ def plotCovidFigure(nuovi_decessi_average, nuovi_positivi_average, nuovi_TI_aver
     return caption, fig, fig2
 
 
-def writePost(dataCovid):
-    print("I'm writing the post")
-    nuovi_positivi = dataCovid['nuovi_positivi'].to_numpy()
-    maxLen = len(nuovi_positivi)
-
-    maxDay = maxLen;
-    decessiTotali = dataCovid['deceduti'].to_numpy()
-    nuovi_decessi = np.zeros(maxDay)
-    nuovi_decessi[1:] = decessiTotali[1:] - decessiTotali[:-1]
-    dates = dataCovid['data'].to_numpy()
-    dateValues = [datetime.datetime.strptime(dates[d][:10], "%Y-%m-%d").date() for d in range(1, maxLen)]
-
-    weekNumber = int(np.ceil(maxDay / 7))
-    weekCumulativePositive = np.zeros((weekNumber, 7));
-    weekCumulativeDeaths = np.zeros((weekNumber, 7));
-    percentageEachWeekDeaths = np.zeros(weekNumber);
-    percentageEachWeekPositive = np.zeros(weekNumber);
-
-    for w in range(1, weekNumber + 1):
-        day = (w - 1) * 7 + 1;
-        weekCumulativePositive[w - 1, 1 - 1] = nuovi_positivi[day - 1]
-        weekCumulativeDeaths[w - 1, 1 - 1] = nuovi_decessi[day - 1];
-        for dd in range(2, 8):
-            day = day + 1;
-            if day <= maxDay:
-                weekCumulativePositive[w - 1, dd - 1] = weekCumulativePositive[w - 1, dd - 2] + nuovi_positivi[day - 1];
-                weekCumulativeDeaths[w - 1, dd - 1] = weekCumulativeDeaths[w - 1, dd - 2] + nuovi_decessi[day - 1];
-        if w > 1:
-            percentageEachWeekDeaths[w - 1] = (weekCumulativeDeaths[w - 1, 7 - 1] - weekCumulativeDeaths[
-                w - 2, 7 - 1]) / weekCumulativeDeaths[w - 2, 7 - 1];
-            percentageEachWeekPositive[w - 1] = (weekCumulativePositive[w - 1, 7 - 1] - weekCumulativePositive[
-                w - 2, 7 - 1]) / weekCumulativePositive[w - 2, 7 - 1];
-
-    dayOfTheWeek = np.mod(maxDay - 1, 7) + 1;
-    weekDays = ["lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato", "domenica"];
-
-    decessiString = ''
-
-    if dayOfTheWeek == 1:
-        decessiString += "Decessi del lunedì\n\n"
-    else:
-        decessiString += "Decessi tra lunedì e %s\n\n" % (weekDays[dayOfTheWeek - 1])
-
-    numStr = f'{int(weekCumulativeDeaths[-1, dayOfTheWeek - 1]):,}'
-    decessiString += "- questa settimana: %s\n" % (numStr)
-    numStr = f'{int(weekCumulativeDeaths[-2, dayOfTheWeek - 1]):,}'
-    decessiString += "- scorsa settimana: %s\n" % (numStr)
-    numStr = f'{int(weekCumulativeDeaths[-3, dayOfTheWeek - 1]):,}'
-    decessiString += "- due settimane fa: %s\n" % (numStr)
-    numStr = f'{int(weekCumulativeDeaths[-4, dayOfTheWeek - 1]):,}'
-    decessiString += "- tre settimane fa: %s\n" % (numStr)
-    numStr = f'{int(weekCumulativeDeaths[-5, dayOfTheWeek - 1]):,}'
-    decessiString += "- quattro settimane fa: %s\n" % (numStr)
-    numStr = f'{int(weekCumulativeDeaths[-6, dayOfTheWeek - 1]):,}'
-    decessiString += "- cinque settimane fa: %s\n\n" % (numStr)
-
-    meanLast4Weeks = np.mean(weekCumulativeDeaths[-5:-1, dayOfTheWeek - 1]);
-    var = (weekCumulativeDeaths[-1, dayOfTheWeek - 1] - meanLast4Weeks) / meanLast4Weeks;
-
-    decessiString += "Variazione rispetto alla media delle ultime 4 settimane\n"
-    decessiString += "- decessi: %+g %s" % (round(var * 100), "%")
-
-    if dayOfTheWeek == 7:
-        incrementiStr = ''
-        incrementiStr += "Tassi di crescita dei decessi settimanali\n\n";
-        incrementiStr += "- questa settimana: %+g %s\n" % (round(percentageEachWeekDeaths[w - 1] * 100), "%");
-        incrementiStr += "- scorsa settimana: %+g %s\n" % (round(percentageEachWeekDeaths[w - 2] * 100), "%");
-        incrementiStr += "- due settimane fa: %+g %s\n" % (round(percentageEachWeekDeaths[w - 3] * 100), "%");
-        incrementiStr += "- tre settimane fa: %+g %s\n" % (round(percentageEachWeekDeaths[w - 4] * 100), "%");
-        incrementiStr += "- quattro settimane fa: %+g %s\n" % (round(percentageEachWeekDeaths[w - 5] * 100), "%");
-        incrementiStr += "- cinque settimane fa: %+g %s\n" % (round(percentageEachWeekDeaths[w - 6] * 100), "%");
-    else:
-        incrementiStr = None
-    return decessiString, incrementiStr
+ 
+def plotCovidData(country='Italy',endDate=datetime.datetime.today(), startDate=datetime.date(2020,8,15), fatality=2, 
+    deathDelay=12, IcuOnHospRatio=10, plotScale="linear"):
+  mask=dataCovid.location==country
+  countryCovidData=dataCovid.loc[mask]
+  pop100= countryCovidData.population.iloc[0]/100000
+ 
+  nuoviDecAveraged=np.convolve(countryCovidData['new_deaths'].to_numpy(),1/7*np.ones(7),'valid')/pop100;
+  nuoviCasAveraged=np.convolve(countryCovidData['new_cases'].to_numpy(),1/7*np.ones(7),'valid')/pop100;
+  idxsNan=np.isnan(nuoviDecAveraged)
+  nuoviDecAveraged[idxsNan]=0
+  idxsNan=np.isnan(nuoviCasAveraged)
+  nuoviCasAveraged[idxsNan]=0
+ 
+ 
+  dates=countryCovidData['date'].to_numpy()
+  ll=len(nuoviDecAveraged)
+  lenDates=len(dates)
+  dateValuesCases = [datetime.datetime.strptime(dates[d],"%Y-%m-%d").date() for d in range(lenDates-ll,lenDates)]
+  dateValuesDeaths = [k+datetime.timedelta(days = -deathDelay) for k in dateValuesCases]
+  formatter = mdates.DateFormatter("%m-%Y")
+ 
+  fig, ax1 = plt.subplots(figsize=(6,6))
+ 
+  maxPlots=max(max(nuoviCasAveraged), max(nuoviDecAveraged/fatality*100))
+  
+  color = 'tab:blue'
+ 
+  ax1.xaxis.set_major_formatter(formatter)
+  ax1.set_xlabel('Date')
+  ax1.set_ylabel('New Cases per 100 000 population (7 days average)', color=color)
+  if plotScale=="linear":
+    ax1.plot(dateValuesCases,nuoviCasAveraged,label="Cases", color=color)
+  elif plotScale=="logarithmic":
+        ax1.semilogy(dateValuesCases,nuoviCasAveraged,label="Cases", color=color)
+  ax1.tick_params(axis='y', labelcolor=color)
+  xticks=[datetime.date(2020,d,1) for d in range(1,13)]
+  for d in range(1,13):
+    xticks.append(datetime.date(2021,d,1))
+  ax1.set_xticks(xticks)
+  ax1.set_ylim([10**-3,maxPlots])
+  ax1.set_xlim([datetime.date(2020,initMonth,1),datetime.datetime.today()])
+  ax1.grid(True)
+  ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+ 
+  color = 'tab:red'
+  ax2.set_ylabel('New Deaths per 100 000 population (7 days average)', color=color)  # we already handled the x-label with ax1
+  if plotScale=="linear":
+    ax2.plot(dateValuesDeaths, nuoviDecAveraged, color=color)
+  elif plotScale=="logarithmic":
+    ax2.semilogy(dateValuesDeaths, nuoviDecAveraged, color=color)
+  ax2.tick_params(axis='y', labelcolor=color)
+  ax2.set_xticks(xticks)
+  ax2.set_ylim([10**-3*fatality/100,maxPlots*fatality/100])
+  ax2.set_xlim([datetime.date(2020,initMonth,1),datetime.datetime.today()])
+ 
+  plt.title(country)
+  fig.tight_layout()  # otherwise the right y-label is slightly clipped
+  plt.show()
+ 
+  IcuAveraged=countryCovidData['icu_patients'].to_numpy()/pop100;
+  HospAveraged=countryCovidData['hosp_patients'].to_numpy()/pop100;
+ 
+  idxsNan=np.isnan(IcuAveraged)
+  IcuAveraged[idxsNan]=0
+  idxsNan=np.isnan(HospAveraged)
+  HospAveraged[idxsNan]=0
+ 
+  dates=countryCovidData['date'].to_numpy()
+  ll=len(IcuAveraged)
+  lenDates=len(dates)
+  dateValuesIcu = [datetime.datetime.strptime(dates[d],"%Y-%m-%d").date() for d in range(lenDates-ll,lenDates)]
+  formatter = mdates.DateFormatter("%d-%m-%Y")
+ 
+  fig, ax1 = plt.subplots(figsize=(6,6))
+ 
+  maxPlots=max(max(HospAveraged), max(IcuAveraged/IcuOnHospRatio*100))
+ 
+  color = 'tab:blue'
+ 
+  ax1.xaxis.set_major_formatter(formatter)
+  ax1.set_xlabel('Date')
+  ax1.set_ylabel('Total Hospitalizations per 100 000 population', color=color)
+  ax1.plot(dateValuesIcu,HospAveraged, color=color)
+  ax1.tick_params(axis='y', labelcolor=color)
+  ax1.set_xticks(xticks)
+  ax1.set_ylim([10**-3,maxPlots])
+  ax1.set_xlim([datetime.date(2020,initMonth,1),datetime.datetime.today()])
+  ax1.grid(True)
+  ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+ 
+  color = 'tab:red'
+  ax2.set_ylabel('Total Covid Intensive Care Units per 100 000 population', color=color)  # we already handled the x-label with ax1
+  ax2.plot(dateValuesIcu, IcuAveraged, color=color)
+  ax2.tick_params(axis='y', labelcolor=color)
+  ax2.set_xticks(xticks)
+  ax2.set_ylim([0,maxPlots*IcuOnHospRatio/100])
+  ax2.set_xlim([datetime.date(2020,initMonth,1),datetime.datetime.today()])
+ 
+  plt.title(country)
+  fig.tight_layout()  # otherwise the right y-label is slightly clipped
+  plt.show()
