@@ -1,4 +1,4 @@
-from utilsTwitterCovid import plotCovidFigure
+from utils import plotCovidFigure
 import pandas as pd
 import streamlit as st
 import time

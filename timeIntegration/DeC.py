@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy.polynomial.legendre import leggauss
-from quadr import lglnodes,equispaced
+from timeIntegration.quadr import lglnodes, equispaced
+
 def lagrange_basis(nodes,x,k):
     y=np.zeros(x.size)
     for ix, xi in enumerate(x):
