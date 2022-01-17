@@ -16,9 +16,12 @@ def fetch_and_clean_data(url):
 
 def app():
     link = "https://covid.ourworldindata.org/data/owid-covid-data.csv"
-    st.write("# Analisi Dati [Covid Our World in Data](https://covid.ourworldindata.org)")  # markdown
+    st.write("# Analisi Dati Covid Mondo")  # markdown
     st.write(
-        "Dati disponibili *giornalmente* su nuovi casi, nuovi decessi. Non tutte le nazioni usano le stesse definizioni")  # markdown
+        "Dati disponibili *giornalmente* su [Our World in Data](https://covid.ourworldindata.org)"
+        " su nuovi casi, nuovi decessi. **Attenzione!** "
+        "Non tutte le nazioni usano le stesse definizioni, quindi i paragoni "
+        "tra nazioni diverse non sono troppo attendibili.")  # markdown
     st.write("Qui sotto tracciamo i dati in media mobile a 7 giorni: "
     "ogni dato rappresenta la media dei 7 giorni precedenti") #markdown
     st.write("Le linee sono raffigurate in un'immagine sola e si "
