@@ -1,23 +1,26 @@
 import streamlit as st
-from app_time_integration import run_model_and_simulation
-from app_italy import run_italian_data
-from app_world_data import run_world
-from about import about
-st.set_page_config(page_title="Analisi Pandemia")
+import app_italy
+import app_time_integration
+import about
+import home
+import app_world_data
 
-def main():
+def app_loading():
+    st.set_page_config(page_title="Analisi Pandemia")
+
     st.sidebar.title("Cosa visualizzare")
-    app_mode = st.sidebar.selectbox("Scegli l'argomento",
-        ["Dati Italiani", "Modelli e simulazioni", "Dati Mondo", "About"])
 
-    if app_mode == "Modelli e simulazioni":
-        run_model_and_simulation()
-    elif app_mode == "Dati Italiani":
-        run_italian_data()
-    elif app_mode == "Dati Mondo":
-        run_world()
-    elif app_mode == "About":
-        about()
+    PAGES = {
+        "Home": home,
+        "Dati Italia": app_italy,
+        "Dati Mondo": app_world_data,
+        "Modelli e Simulazioni": app_time_integration,
 
-if __name__ == '__main__':
-    main()
+        "About": about,
+
+    }
+
+    page = st.sidebar.radio("", list(PAGES.keys()))
+    PAGES[page].app()
+
+app_loading()

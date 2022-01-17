@@ -1,6 +1,6 @@
 import streamlit as st
 
-def about():
+def app():
     st.write("# About")
     col1, col2, col3 = st.beta_columns([5,2,5])
 

@@ -1,16 +1,16 @@
 from utils import plotCovidFigure
 import pandas as pd
 import streamlit as st
-import time
 import numpy as np
 import datetime
 
+@st.cache(ttl=3600)
+def fetch_and_clean_data(url):
+    # Fetch data from URL here, and then clean it up.
+    data = pd.read_csv(url)
+    return data
 
-
-def main():
-    run_italian_data()
-
-def run_italian_data():
+def app():
     st.write("# Analisi Dati Covid Protezione Civile") #markdown
     st.write("[Dati disponibili giornalmente](https://github.com/pcm-dpc/COVID-19) su nuovi casi, nuovi decessi, nuove terapie intensive, terapie intensive occupate e posti letto occupati") #markdown
     st.write("Tutti i dati in media mobile a 7 giorni: ogni dato rappresenta la media dei 7 giorni precedenti") #markdown
@@ -39,9 +39,6 @@ def run_italian_data():
     dates = dataCovid['data'].to_numpy()
     dateValues = [datetime.datetime.strptime(dates[d][:10], "%Y-%m-%d").date() for d in range(maxLen)]
 
-
-
-
     startDate = st.sidebar.date_input('Data iniziale', min_value=dateValues[0], max_value=dateValues[-1], value=datetime.date(2020,8,15))
     endDate = st.sidebar.date_input('Data Finale', min_value=dateValues[0], max_value=dateValues[-1]+ datetime.timedelta(days=10), value=dateValues[-1]+ datetime.timedelta(days=10))
     logScale = st.sidebar.checkbox("Scala logaritmica",value=True)
@@ -53,11 +50,6 @@ def run_italian_data():
     hospShift = st.sidebar.slider("Ritardo delle ospedalizzazioni", 0, 20, 10)
     ICUShift = st.sidebar.slider("Ritardo delle terapie intensive", 0, 20, 12)
     newICUshift = st.sidebar.slider("Ritardo delle nuove terapie intensive", 0, 20, 5)
-
-
-
-
-
 
     caption, fig, fig2 = plotCovidFigure(
         nuovi_decessi_average, nuovi_positivi_average, nuovi_TI_average, TI, ospedalizzati, dateValues,
@@ -75,11 +67,7 @@ def run_italian_data():
     st.pyplot(fig)
     st.pyplot(fig2)
 
-@st.cache(ttl=3600)
-def fetch_and_clean_data(url):
-    # Fetch data from URL here, and then clean it up.
-    data = pd.read_csv(url)
-    return data
+
 
 
 
