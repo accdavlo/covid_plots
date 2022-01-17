@@ -90,7 +90,7 @@ def run_simulations():
         color='Method',
         strokeDash='Class', 
         tooltip=['Class','Method', 'Time', 'Population']
-        ).interactive()
+        )
 
 
     st.altair_chart(altPlot, use_container_width=True)
@@ -178,7 +178,8 @@ def run_model():
         color='Legend',
         strokeDash='Legend', 
         tooltip=['Legend', 'Time', 'Population']
-    ).interactive()
+    )
+    #.interactive()
     #.properties(
     #    width=600,
     #    height=400

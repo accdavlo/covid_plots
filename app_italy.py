@@ -66,7 +66,8 @@ def app():
     ICUShift = st.sidebar.slider("Ritardo delle terapie intensive", 0, 20, 12)
     newICUshift = st.sidebar.slider("Ritardo delle nuove terapie intensive", 0, 20, 5)
 
-    caption, fig, fig2 = plotCovidFigure(
+    #caption, fig, fig2 = 
+    plotCovidFigure(
         nuovi_decessi_average, nuovi_positivi_average, nuovi_TI_average, TI, ospedalizzati, dateValues,
                                                endDate,
                                                startDate,
@@ -79,8 +80,8 @@ def app():
                                                ICUShift , 
                                                newICUshift,
                                                logScale)
-    st.pyplot(fig)
-    st.pyplot(fig2)
+#    st.pyplot(fig)
+#    st.pyplot(fig2)
 
     st.write("Qua sopra sono raffigurati "
         "i rapporti tra i nuovi decessi e i nuovi casi "
