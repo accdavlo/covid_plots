@@ -2,7 +2,7 @@ import streamlit as st
 
 def app():
     st.write("# About")
-    col1, col2, col3 = st.beta_columns([5,2,5])
+    col1, col2, col3 = st.columns([5,2,5])
 
     with col1:
         st.image("davide.jpg")
@@ -17,6 +17,3 @@ def app():
         st.write("Ricercatore PostDoc all'Università Bocconi di Milano")
         st.write("Support alla realizzazione della webapp e deploy")
         st.write("[Website](https://federicobianchi.io/), [Twitter](https://twitter.com/federicobianchy)")
-
-
-

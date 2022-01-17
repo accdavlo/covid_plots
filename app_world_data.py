@@ -18,9 +18,18 @@ def app():
     link = "https://covid.ourworldindata.org/data/owid-covid-data.csv"
     st.write("# Analisi Dati [Covid Our World in Data](https://covid.ourworldindata.org)")  # markdown
     st.write(
-        "Dati disponibili giornalmente su nuovi casi, nuovi decessi. Non tutte le nazioni usano le stesse definizioni")  # markdown
-    st.write(
-        "Tutti i dati in media mobile a 7 giorni: ogni dato rappresenta la media dei 7 giorni precedenti")  # markdown
+        "Dati disponibili *giornalmente* su nuovi casi, nuovi decessi. Non tutte le nazioni usano le stesse definizioni")  # markdown
+    st.write("Qui sotto tracciamo i dati in media mobile a 7 giorni: "
+    "ogni dato rappresenta la media dei 7 giorni precedenti") #markdown
+    st.write("Le linee sono raffigurate in un'immagine sola e si "
+        "possono cambiare alcuni parametri per le varie curve: "
+        "un coefficiente che alza e abbassa i decessi (la letalità apparente) e uno "
+        "shift di giorni rispetto alla notifica. Prova a variarli nella barra laterale!")
+    st.write("Interessante è vedere come le curve possano sovrapporsi "
+        "per alcune fasi della pandemia se i coefficienti sono scelti bene.")
+    st.write("Al variare delle fasi della pandemia si nota come "
+        "le relazioni tra le curve si modifichino e questo grafico"
+        " aiuta a capire come si evolve la pandemia.")
 
     dataCovid = fetch_and_clean_data(link)
 
@@ -39,6 +48,29 @@ def app():
 
     st.pyplot(fig)
     st.pyplot(fig2)
+
+    st.write("Qua sopra sono raffigurati "
+        "i rapporti tra i nuovi decessi e i nuovi casi."
+        "Anche in questo caso i decessi "
+        "sono shiftati dei giorni settati. Questo è necessario per"
+        " tener conto del ritardo che c'è tra la notifica del caso"
+        " e del decesso.")
+    st.write("Questo grafico ci racconta approsimativamente "
+        "come si è modificata la letalità appartente e "
+        "il tasso di ricovero in terapia intensiva.")
+    st.markdown("""Queste quantità dipendono da tanti fattori: 
+* la letalità dipende dalle fasce d'età e in fasi diverse
+         diverse della pandemia, diverse fasce d'età son state colpite
+* il denominatore (i casi notificati) è fortemente influenzato dal testing
+* grossi eventi superspreading possono modificare di molto numeratore e denominatore
+a seconda delle categorie esposte agli eventi
+* festività possono cambiare i network di contatti
+* tanti altri ancora.
+""")
+    st.write("Quindi questi risultati vanno presi con cautela "
+        "e usati solo per avere un'idea generale dell'andamento in tempi rapidi. "
+        "Per risultati più precisi è meglio usare i dati per fasce d'età: non tutti le nazioni li rilasciano.")
+
 
 
 def plotCovidData(dataCovid, country, startDate, endDate, fatality=2, deathDelay=12, logScale=True):
