@@ -11,7 +11,7 @@ def app_loading():
     st.sidebar.title("Cosa visualizzare")
 
     PAGES = {
-    #    "Home": home,
+        "Home": home,
         "Dati Italia": app_italy,
         "Dati Mondo": app_world_data,
         "Modelli e Simulazioni": app_time_integration,
