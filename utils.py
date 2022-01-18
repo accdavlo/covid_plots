@@ -285,6 +285,62 @@ def plotCovidData(country='Italy',endDate=datetime.datetime.today(), startDate=d
   dateValuesDeaths = [k+datetime.timedelta(days = -deathDelay) for k in dateValuesCases]
   formatter = mdates.DateFormatter("%m-%Y")
  
+  source = pd.DataFrame({})
+
+  source = source.append(
+    pd.DataFrame({
+        'Time':np.array(dateValuesCases),
+        'Popolazione': nuoviCasAveraged,
+        'Casi':nuoviCasAveraged,
+        'Classe':'Casi'
+    }))
+
+  source = source.append(
+    pd.DataFrame({
+        'Time':np.array(dateValuesCases),
+        'Popolazione': dateValuesDeaths,
+        'Casi':dateValuesDeaths/fatality,
+        'Classe':'Decessi'
+    }))
+
+  if plotScale=="logarithmic":
+    altPlot= alt.Chart(source).transform_filter(
+    alt.datum.Casi > 0  
+        ).mark_line().encode(
+        alt.Y('Casi' , scale=alt.Scale(type='log',domain=[100, 200000])),
+        x='Time',
+        color=alt.Color('Classe', legend=alt.Legend(
+                orient='none',
+                legendX=20, legendY=0,
+                direction='vertical',
+                titleAnchor='middle',
+                fillColor="gray",
+                labelFontSize=14)),
+        strokeDash='Classe', 
+        tooltip=['Time','Classe', 'Popolazione']
+        ).interactive()
+  else:
+    altPlot= alt.Chart(source).transform_filter(
+    alt.datum.Casi > 0  
+        ).mark_line().encode(
+        alt.Y('Casi'),
+        x='Time',
+        color=alt.Color('Classe', legend=alt.Legend(
+                orient='none',
+                legendX=20, legendY=0,
+                direction='vertical',
+                titleAnchor='middle',
+                fillColor="gray",
+                labelFontSize=14)),
+        strokeDash='Classe', 
+        tooltip=['Time','Classe', 'Popolazione']
+        ).interactive()
+  print("ciao")
+  print(source)
+  print(altPlot)
+  st.altair_chart(altPlot, use_container_width=True)
+
+
   fig, ax1 = plt.subplots(figsize=(6,6))
  
   maxPlots=max(max(nuoviCasAveraged), max(nuoviDecAveraged/fatality*100))
