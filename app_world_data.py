@@ -1,10 +1,7 @@
 import pandas as pd
 import streamlit as st
-import time
 import numpy as np
 import datetime
-import matplotlib.dates as mdates
-import matplotlib.pyplot as plt
 import altair as alt
 
 @st.cache
@@ -16,7 +13,7 @@ def fetch_and_clean_data(url):
 
 def app():
     link = "https://covid.ourworldindata.org/data/owid-covid-data.csv"
-    st.write("# Analisi Dati Covid Mondo")  # markdown
+    st.write("## Analisi Dati Covid Mondo")  # markdown
     st.write(
         "Dati disponibili *giornalmente* su [Our World in Data](https://covid.ourworldindata.org)"
         " su nuovi casi, nuovi decessi. **Attenzione!** "

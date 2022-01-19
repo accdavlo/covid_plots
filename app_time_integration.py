@@ -10,7 +10,7 @@ import pandas as pd
 
 
 def app():
-    st.write("# Modello SIR: simulazioni")  # markdown
+    st.write("## Modello SIR: simulazioni")  # markdown
     st.write(" Il modello SIR considera 3 classi: S suscettibili, I infetti e R guariti")
     st.latex(
         r"\frac{dS}{dt} = -\beta \frac{SI}{N}, \quad \frac{dI}{dt} = \beta \frac{SI}{N} -  \gamma I, \quad  \frac{dR}{dt}= \gamma I .")
