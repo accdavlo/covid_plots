@@ -8,8 +8,8 @@ import streamlit as st
 
 def plotCovidFigure(nuovi_decessi_average, nuovi_positivi_average, nuovi_TI_average, TI, ospedalizzati,
                     dateValues,
-                    endDate,
-                    startDate=datetime.date(2020,8,15),
+                    #endDate,
+                    #startDate=datetime.date(2020,8,15),
                     let=0.02,
                     ospCases=0.013/0.02,
                     ICUCases=0.115/0.02,
@@ -21,17 +21,17 @@ def plotCovidFigure(nuovi_decessi_average, nuovi_positivi_average, nuovi_TI_aver
                     logScale=True):
     print("I'm plotting")
 
-    fig, ax1 = plt.subplots(figsize=(10, 6), dpi=600)
+    # fig, ax1 = plt.subplots(figsize=(10, 6), dpi=600)
     
-    xticksMy = []    
-    for j in range(2020, 2024):
-        for k in range(1, 13):
-            xticksMy.append(datetime.date(j, k, 1))
+    # xticksMy = []    
+    # for j in range(2020, 2024):
+    #     for k in range(1, 13):
+    #         xticksMy.append(datetime.date(j, k, 1))
 
-    formatter = mdates.DateFormatter("%m/%y")
-    ax1.xaxis.set_major_formatter(formatter)
-    ax1.set_xticks(xticksMy)
-    plt.xlim([startDate, endDate])
+    # formatter = mdates.DateFormatter("%m/%y")
+    # ax1.xaxis.set_major_formatter(formatter)
+    # ax1.set_xticks(xticksMy)
+    # plt.xlim([startDate, endDate])
 
 
     source = pd.DataFrame({})

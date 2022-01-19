@@ -54,13 +54,13 @@ def app():
     dates = dataCovid['data'].to_numpy()
     dateValues = [datetime.datetime.strptime(dates[d][:10], "%Y-%m-%d").date() for d in range(maxLen)]
 
-    startDate = st.sidebar.date_input('Data iniziale', min_value=dateValues[0], max_value=dateValues[-1], value=datetime.date(2020,8,15))
-    endDate = st.sidebar.date_input('Data Finale', min_value=dateValues[0], max_value=dateValues[-1]+ datetime.timedelta(days=10), value=dateValues[-1]+ datetime.timedelta(days=10))
+    #startDate = st.sidebar.date_input('Data iniziale', min_value=dateValues[0], max_value=dateValues[-1], value=datetime.date(2020,8,15))
+    #endDate = st.sidebar.date_input('Data Finale', min_value=dateValues[0], max_value=dateValues[-1]+ datetime.timedelta(days=10), value=dateValues[-1]+ datetime.timedelta(days=10))
     logScale = st.sidebar.checkbox("Scala logaritmica",value=True)
     let = st.sidebar.slider("Letalità", 0.0, 0.03, 0.02,step=0.001,format="%1.3f")
     ospCases = st.sidebar.slider("Ospedalizzati su nuovi casi", 0.0, 2.0, 0.02/0.013,step=0.01)
-    ICUCases = st.sidebar.slider("Terapie intensive su nuovi casi", 0.0, 1.0, 0.02/0.115,step=0.01)
-    newICUCases = st.sidebar.slider("Nuove terapie intensive su nuovi casi", 0.0, 0.03, 0.02/1.7,step=0.001,format="%1.3f")
+    ICUCases = st.sidebar.slider("Terapie intensive su nuovi casi", 0.0, 0.2, 0.02/0.115,step=0.001,format="%1.3f")
+    newICUCases = st.sidebar.slider("Nuove terapie intensive su nuovi casi", 0.0, 0.015, 0.02/1.7,step=0.0001,format="%1.4f")
     deathsShift = st.sidebar.slider("Ritardo dei decessi", 0, 20, 13)
     hospShift = st.sidebar.slider("Ritardo delle ospedalizzazioni", 0, 20, 10)
     ICUShift = st.sidebar.slider("Ritardo delle terapie intensive", 0, 20, 12)
@@ -69,8 +69,8 @@ def app():
     #caption, fig, fig2 = 
     plotCovidFigure(
         nuovi_decessi_average, nuovi_positivi_average, nuovi_TI_average, TI, ospedalizzati, dateValues,
-                                               endDate,
-                                               startDate,
+                                               #endDate,
+                                               #startDate,
                                                let,
                                                ospCases,
                                                ICUCases,

@@ -39,17 +39,17 @@ def app():
     dataCovid = fetch_and_clean_data(link)
 
     country = st.sidebar.selectbox("Nazione", dataCovid.location.unique(), index=104)
-    startDate = st.sidebar.date_input('Data iniziale', min_value=datetime.date(2020, 3, 1),
-                                      max_value=datetime.datetime.today(), value=datetime.date(2020, 3, 1))
-    endDate = st.sidebar.date_input('Data Finale', min_value=datetime.date(2020, 3, 1),
-                                    max_value=datetime.datetime.today() + datetime.timedelta(days=10),
-                                    value=datetime.datetime.today() + datetime.timedelta(days=10))
+    #startDate = st.sidebar.date_input('Data iniziale', min_value=datetime.date(2020, 3, 1),
+    #                                  max_value=datetime.datetime.today(), value=datetime.date(2020, 3, 1))
+    # endDate = st.sidebar.date_input('Data Finale', min_value=datetime.date(2020, 3, 1),
+    #                                 max_value=datetime.datetime.today() + datetime.timedelta(days=10),
+    #                                 value=datetime.datetime.today() + datetime.timedelta(days=10))
     logScale = st.sidebar.checkbox("Scala logaritmica", value=True)
     let = st.sidebar.slider("Letalità", 0.0, 0.1, 0.02, step=0.001, format="%1.3f")
     deathsShift = st.sidebar.slider("Ritardo dei decessi", 1, 20, 13)
 
     #fig, fig2 = 
-    plotCovidData(dataCovid, country, startDate, endDate, fatality=let, deathDelay=deathsShift,
+    plotCovidData(dataCovid, country, fatality=let, deathDelay=deathsShift,
                               logScale=logScale)
 
     #st.pyplot(fig)
@@ -78,7 +78,7 @@ a seconda delle categorie esposte agli eventi
 
 
 
-def plotCovidData(dataCovid, country, startDate, endDate, fatality=2, deathDelay=12, logScale=True):
+def plotCovidData(dataCovid, country, fatality=2, deathDelay=12, logScale=True):
     mask = dataCovid.location == country
     countryCovidData = dataCovid.loc[mask]
     pop100 = countryCovidData.population.iloc[0] / 100000
@@ -130,6 +130,7 @@ def plotCovidData(dataCovid, country, startDate, endDate, fatality=2, deathDelay
             'Classe':'Letalità apparente'
         }))
 
+    multi = alt.selection_multi(on='mouseover', nearest=True)
 
     if logScale:
         altPlot= alt.Chart(source).transform_filter(
@@ -148,6 +149,8 @@ def plotCovidData(dataCovid, country, startDate, endDate, fatality=2, deathDelay
             tooltip=['Time','Classe', 'Casi/decessi per 100k']
             ).properties(
                 title='Casi su 100.000 abitanti'
+            ).add_selection(
+                multi
             ).interactive()
     else:
         altPlot= alt.Chart(source).transform_filter(
@@ -167,6 +170,7 @@ def plotCovidData(dataCovid, country, startDate, endDate, fatality=2, deathDelay
             ).properties(
                 title='Casi su 100.000 abitanti'
             ).interactive()
+
     st.altair_chart(altPlot, use_container_width=True)
 
     altPlot2= alt.Chart(source2).mark_line().encode(
