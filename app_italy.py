@@ -11,24 +11,20 @@ def fetch_and_clean_data(url):
     return data
 
 def app():
-    st.write("# Analisi Dati Covid Protezione Civile") #markdown
-    st.write("Dati disponibili giornalmente su "
-        "[github](https://github.com/pcm-dpc/COVID-19) "
-        "pubblicati dalla protezione civile")
+    st.write("## Analisi Dati Covid Protezione Civile") #markdown
+
     st.write("I dati contengono i nuovi casi, nuovi decessi,"
         " nuove terapie intensive, terapie intensive occupate "
-        "e posti letto occupati notificati giorno per giorno") #markdown
+        "e posti letto occupati notificati giorno per giorno.") #markdown
     st.write("Qui sotto tracciamo tutti i dati in media mobile a 7 giorni: "
-    "ogni dato rappresenta la media dei 7 giorni precedenti") #markdown
-    st.write("Tutte le linee sono raffigurate in un'immagine sola e si "
+    "ogni dato rappresenta la media dei 7 giorni precedenti. Tutte le linee sono raffigurate in un'immagine sola e si "
         "possono cambiare alcuni parametri per le varie curve: "
         "un coefficiente che alza e abbassa le curve e uno "
         "shift di giorni rispetto alla notifica. Prova a variarli nella barra laterale!")
     st.write("Interessante è vedere come le curve possano sovrapporsi "
         "per alcune fasi della pandemia se i coefficienti sono scelti bene.")
     st.write("Al variare delle fasi della pandemia si nota come "
-        "le relazioni tra le curve si modifichino e questo grafico"
-        " aiuta a capire come si evolve la pandemia.")
+        "le relazioni tra le curve si modifichino e questo grafico **aiuti a capire** come si evolve la pandemia.")
     link = "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv"
 
     dataCovid = fetch_and_clean_data(link)
@@ -94,19 +90,21 @@ def app():
         "come si è modificata la letalità appartente e "
         "il tasso di ricovero in terapia intensiva.")
     st.markdown("""Queste quantità dipendono da tanti fattori: 
-* la letalità dipende dalle fasce d'età e in fasi diverse
-         diverse della pandemia, diverse fasce d'età son state colpite
-* il denominatore (i casi notificati) è fortemente influenzato dal testing
-* grossi eventi superspreading possono modificare di molto numeratore e denominatore
-a seconda delle categorie esposte agli eventi
-* festività possono cambiare i network di contatti
-* tanti altri ancora 
+        * la letalità dipende dalle fasce d'età e in fasi diverse
+                 diverse della pandemia, diverse fasce d'età son state colpite
+        * il denominatore (i casi notificati) è fortemente influenzato dal testing
+        * grossi eventi superspreading possono modificare di molto numeratore e denominatore
+        a seconda delle categorie esposte agli eventi
+        * festività possono cambiare i network di contatti
+        * tanti altri ancora 
 """)
     st.write("Quindi questi risultati vanno presi con cautela "
         "e usati solo per avere un'idea generale dell'andamento in tempi rapidi. "
         "Per risultati più precisi è meglio usare i dati per fasce d'età rilasciati "
         "dall'Istituto superiore della sanità [a questo link](https://www.epicentro.iss.it/coronavirus/)")
 
-
+    st.write("Dati disponibili giornalmente su "
+        "[github](https://github.com/pcm-dpc/COVID-19) "
+        "pubblicati dalla protezione civile")
 
 

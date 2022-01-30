@@ -8,6 +8,7 @@ import app_convolution
 
 def app_loading():
     st.set_page_config(page_title="Analisi Pandemia")
+    st.write("# Analisi sui dati della pandemia")
 
     st.sidebar.title("Cosa visualizzare")
 
@@ -18,7 +19,6 @@ def app_loading():
         "Convoluzione Casi":app_convolution,
         "Modelli e Simulazioni": app_time_integration,
         "About": about,
-
     }
 
     page = st.sidebar.radio("", list(PAGES.keys()))
