@@ -4,6 +4,7 @@ import app_time_integration
 import about
 import home
 import app_world_data
+import app_convolution
 
 def app_loading():
     st.set_page_config(page_title="Analisi Pandemia")
@@ -14,8 +15,8 @@ def app_loading():
         "Home": home,
         "Dati Italia": app_italy,
         "Dati Mondo": app_world_data,
+        "Convoluzione Casi":app_convolution,
         "Modelli e Simulazioni": app_time_integration,
-
         "About": about,
 
     }
